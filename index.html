@@ -1,0 +1,1034 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student-Hub | Attendance Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* LOGIN PAGE STYLES */
+.login-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#a78bfa,#f472b6);
+  z-index: 1000;
+}
+
+.login-box {
+  background: rgba(255,255,255,0.9);
+  padding: 30px 25px;
+  border-radius: 18px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #a78bfa;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background: #7c3aed;
+}
+
+*{box-sizing:border-box;font-family:Inter,Arial,sans-serif;transition:all 0.3s}
+body{
+  margin:0;
+  background: linear-gradient(135deg,#ffd6e0,#ffe4e1,#f0e6ff);
+  color:#333;
+}
+body{
+  margin:0;
+  background: linear-gradient(
+    135deg,
+    #faf5ff,
+    #ede9fe,
+    #e0e7ff
+  );
+  color:#111827;
+}
+body.dark {
+  background: linear-gradient(
+    135deg,
+    #1a0b2d,  /* almost black purple */
+    #2c0f4d,  /* deep dark purple */
+    #3b0f66   /* rich dark violet */
+  );
+  color: #f5f3ff;  /* light text for contrast */
+}
+
+
+.header{
+  text-align:center;
+  padding:30px;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  color: #333;
+  position: relative;
+}
+.header.dark{
+  background: rgba(50,50,60,0.6);
+  color:#eee;
+}
+
+.theme-toggle{
+  position:absolute;
+  top:20px;
+  right:20px;
+  font-size:24px;
+  background:none;
+  border:none;
+  cursor:pointer;
+}
+
+.menu{
+  display:flex;gap:15px;justify-content:center;flex-wrap:wrap;
+  background:rgba(255,255,255,.2);
+  margin:20px;padding:20px;border-radius:18px;
+}
+.menu button{
+  border:none;padding:14px 22px;border-radius:12px;
+  color:#fff;cursor:pointer;font-weight:600;
+}
+.btn-dashboard { background:#a78bfa; }
+.btn-attendance { background:#fca5a5; }
+.btn-add { background:#86efac; }
+.btn-view { background:#67e8f9; }
+.btn-report { background:#fcd34d; color:#333; }
+
+.container{
+  background:rgba(255,255,255,.5);
+  margin:20px;padding:25px;border-radius:18px;
+  color:#333;
+}
+.container.dark{
+  background: rgba(50,50,60,0.6);
+  color:#eee;
+}
+.hidden{display:none}
+
+/* DASHBOARD + REPORT CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+}
+.card{
+  background:rgba(255,255,255,.5);
+  padding:20px;border-radius:14px;text-align:center;
+  color:#333;
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+.card.dark{
+  background: rgba(60,60,70,0.6);
+  color:#eee;
+}
+.card h3{margin:0;font-size:16px;opacity:.8}
+.card p{font-size:28px;margin:10px 0 0;font-weight:bold}
+
+/* ATTENDANCE */
+.filter-bar{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px
+}
+.filter-bar input,
+.filter-bar select,
+.filter-bar button{
+  padding:10px;border-radius:8px;border:none
+}
+.filter-bar button{background:#86efac;color:#333;cursor:pointer}
+.btn-red{background:#fca5a5!important;color:#fff;}
+.btn-blue{background:#67e8f9!important;color:#333;}
+.btn-orange{background:#fcd34d!important;color:#333;}
+
+table{width:100%;border-collapse:collapse;margin-top:15px;border-radius:6px;overflow:hidden;}
+th,td{padding:12px;text-align:center;}
+th{background: rgba(255,255,255,0.5);}
+td{background: rgba(255,255,255,0.3);}
+
+table.dark th{background: rgba(80,80,100,0.6);}
+table.dark td{background: rgba(80,80,100,0.4);}
+
+button.action-btn{
+  padding:5px 10px;margin:2px;border:none;
+  border-radius:5px;cursor:pointer;color:#fff
+}
+.btn-edit{background:#67e8f9;color:#333;}
+.btn-delete{background:#fca5a5;}
+
+/* MODAL */
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center
+}
+.modal-content{
+  background: rgba(255,255,255,0.7);
+  color:#333;
+  padding:25px;
+  width:360px;border-radius:14px;
+  backdrop-filter: blur(8px);
+}
+.modal-content.dark{
+  background: rgba(60,60,70,0.8);
+  color:#eee;
+}
+.modal-content input,
+.modal-content select{
+  width:100%;padding:10px;margin-bottom:10px;border-radius:6px;
+}
+.modal-content button{
+  width:100%;padding:10px;background:#86efac;
+  border:none;color:#333;border-radius:8px;cursor:pointer;
+}
+.close{text-align:right;color:red;cursor:pointer}
+.status-btn{
+  padding:8px 16px;
+  border-radius:30px;
+  border:2px solid;
+  background:transparent;
+  cursor:pointer;
+  font-weight:600;
+  margin:0 5px;
+}
+
+.present-btn{
+  border-color:#22c55e;
+  color:#22c55e;
+}
+.present-btn.active{
+  background:#22c55e;
+  color:white;
+}
+
+.absent-btn{
+  border-color:#ef4444;
+  color:#ef4444;
+}
+.absent-btn.active{
+  background:#ef4444;
+  color:white;
+}
+
+</style>
+</head>
+
+<body>
+<!-- LOGIN PAGE -->
+<div class="login-container" id="loginPage">
+  <div class="login-box">
+    <h2>🔐 Login</h2>
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red; display:none; margin-top:10px;">Invalid credentials</p>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+<button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+<button class="logout-btn" onclick="logout()">🚪 Logout</button>
+
+    <h1>🎓 Student-Hub</h1>
+  <p style="font-weight:700;letter-spacing:1px">
+    SREE SIDDARAMESHWARA POLYTECHNIC
+  </p>
+  <p style="font-size:14px;opacity:.9">
+    HASSAN ROAD, TIPTUR
+  </p>
+</div>
+
+<div class="menu">
+  <button class="btn-dashboard" onclick="show('dashboard')">Dashboard</button>
+  <button class="btn-attendance" onclick="show('attendance')">Attendance</button>
+  <button class="btn-add" onclick="openModal()">Add Student</button>
+  <button class="btn-view" onclick="show('students')">View Students</button>
+<button style="background:#60a5fa" onclick="show('classes')">Classes</button>
+  <button class="btn-report" onclick="show('report')">Reports</button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container" id="dashboard">
+  <h2>📊 Dashboard</h2>
+  <div class="cards">
+    <div class="card"><h3>Total Students</h3><p id="total">0</p></div>
+    <div class="card"><h3>Today's Attendance</h3><p id="todayAttendance">0</p></div>
+    <div class="card"><h3>This Month</h3><p id="monthAttendance">0%</p></div>
+    <div class="card"><h3>Low Attendance</h3><p id="lowAttendance">0</p></div>
+    <div class="card"><h3>Pending Requests</h3><p>0</p></div>
+<div class="card">
+  <h3>Total Classes</h3>
+  <p id="totalClasses">0</p>
+</div>
+
+  </div>
+</div>
+
+<!-- ATTENDANCE -->
+<div class="container hidden" id="attendance">
+  <h2>📝 Attendance Management</h2>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <input type="date" id="attDate">
+    <select id="attDept">
+      <option>All Departments</option>
+      <option>Computer Science and Engineering</option>
+      <option>Electronics and Communication Engineering</option>
+      <option>Electrical and Electronics Engineering</option>
+      <option>Civil Engineering</option>
+      <option>Mechanical Engineering</option>
+      <option>Apparel Design and Fabrication Technology</option>
+    </select>
+    <select id="attYear">
+      <option>All Years</option>
+      <option>1st Year</option>
+      <option>2nd Year</option>
+      <option>3rd Year</option>
+    </select>
+    <button class="btn-blue" onclick="render()">Load Students</button>
+  </div>
+
+  <!-- Student Table -->
+  <div style="margin-top:15px;">
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Action Buttons -->
+  <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button onclick="saveAttendance()" class="btn-blue">Save Attendance</button>
+    <button onclick="markAll('Present')" class="btn-orange">Mark All Present</button>
+    <button onclick="markAll('Absent')" class="btn-red">Mark All Absent</button>
+  </div>
+</div>
+
+<!-- STUDENTS -->
+<div class="container hidden" id="students">
+  <h2>👨‍🎓 Students</h2>
+  <input type="text" id="searchStudent" placeholder="Search students..."
+    style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:none"
+    onkeyup="searchStudents()">
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Name</th><th>Department</th><th>Year</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="studentBody"></tbody>
+  </table>
+</div>
+  <!-- CLASSES -->
+<div class="container hidden" id="classes">
+  <h2>🏫 Classes Management</h2>
+
+  <div class="filter-bar">
+    <select id="classDept" onchange="loadYears()">
+      <option value="">Select Department</option>
+    </select>
+
+    <select id="classYear" onchange="loadSemesters()">
+      <option value="">Select Year</option>
+    </select>
+
+    <select id="classSem" onchange="loadSubjects()">
+      <option value="">Select Semester</option>
+    </select>
+
+    <select id="classSubject">
+      <option value="">Select Subject</option>
+    </select>
+
+    <button onclick="addClass()" class="btn-blue">Add Class</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Department</th>
+        <th>Year</th>
+        <th>Semester</th>
+        <th>Subject</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="classBody"></tbody>
+  </table>
+</div>
+
+
+<!-- REPORT -->
+<div class="container hidden" id="report">
+  <h2>📑 Attendance Report</h2>
+  <div class="cards" style="margin-bottom:20px">
+    <div class="card"><h3>Total Students</h3><p id="reportTotal">0</p></div>
+    <div class="card"><h3>Present</h3><p id="reportPresent">0</p></div>
+    <div class="card"><h3>Absent</h3><p id="reportAbsent">0</p></div>
+  </div>
+   <div style="display:flex;gap:15px;flex-wrap:wrap">
+    <button onclick="exportAttendance()" style="padding:12px 20px; background:#67e8f9; color:#333; border:none; border-radius:12px; cursor:pointer;">Export Attendance</button>
+  </div>
+</div>
+
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="close" onclick="closeModal()">✖</div>
+    <h3>Add Student</h3>
+    <input id="fullName" placeholder="Full Name *">
+    <input id="studentId" placeholder="Student ID *">
+    <input id="email" placeholder="Email *">
+    <input id="phone" placeholder="Phone">
+    <select id="dept">
+      <option value="">Select Department *</option>
+      <option>Computer Science and Engineering</option>
+      <option>Electronics and Communication Engineering</option>
+      <option>Electrical and Electronics Engineering</option>
+      <option>Civil Engineering</option>
+      <option>Mechanical Engineering</option>
+      <option>Apparel Design and Fabrication Technology</option>
+    </select>
+    <select id="year">
+      <option value="">Select Year *</option>
+      <option>1st Year</option>
+      <option>2nd Year</option>
+      <option>3rd Year</option>
+    </select>
+    <button onclick="saveStudent()">Save</button>
+  </div>
+</div>
+
+<script>
+// LOGIN FUNCTIONALITY
+const validUser = "admin";      // set your username
+const validPass = "1234";       // set your password
+
+function login() {
+  const user = document.getElementById("loginUser").value;
+  const pass = document.getElementById("loginPass").value;
+  const error = document.getElementById("loginError");
+
+  if(user === validUser && pass === validPass){
+    document.getElementById("loginPage").style.display = "none";
+    show("dashboard"); // show dashboard on login
+  } else {
+    error.style.display = "block";
+  }
+}
+
+let students=[], editIndex=null;
+attDate.value = new Date().toISOString().split("T")[0];
+
+function show(id){
+  document.querySelectorAll('.container').forEach(c=>c.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function openModal(){
+  clearStudentForm();   // form clear
+  editIndex = null;     // add mode
+  modal.style.display = "flex";
+}
+
+function closeModal(){modal.style.display="none"}
+function clearStudentForm(){
+  fullName.value = "";
+  studentId.value = "";
+  email.value = "";
+  phone.value = "";
+  dept.value = "";
+  year.value = "";
+}
+function saveStudent(){
+  if(!fullName.value || !studentId.value || !email.value || !dept.value || !year.value){
+    return alert("Fill all required fields");
+  }
+
+  const studentData = {
+    id: studentId.value,
+    name: fullName.value,
+    email: email.value,
+    phone: phone.value,
+    dept: dept.value,
+    year: year.value,
+    status: "Present"
+  };
+
+  if(editIndex === null){
+    students.push(studentData);
+  } else {
+    students[editIndex] = studentData;
+    editIndex = null;
+  }
+
+  clearStudentForm();
+  closeModal();
+  render();
+  updateDashboard();
+}
+
+ // Render function with filters applied for Attendance
+function render(){
+  let filteredStudents = students;
+  const selectedDept = attDept.value;
+  const selectedYear = attYear.value;
+
+  if(selectedDept !== "All Departments"){
+    filteredStudents = filteredStudents.filter(s => s.dept === selectedDept);
+  }
+  if(selectedYear !== "All Years"){
+    filteredStudents = filteredStudents.filter(s => s.year === selectedYear);
+  }
+
+  total.innerText = students.length;
+  todayAttendance.innerText = students.filter(s=>s.status==="Present").length;
+  lowAttendance.innerText = students.filter(s=>s.status==="Absent").length;
+  monthAttendance.innerText = students.length ? Math.round(students.filter(s=>s.status==="Present").length / students.length * 100)+"%" : "0%";
+  updateReport();
+
+  studentBody.innerHTML = students.map((s,i)=>
+    `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.dept}</td><td>${s.year}</td>
+    <td><button class="action-btn btn-edit" onclick="editStudent(${i})">Edit</button>
+    <button class="action-btn btn-delete" onclick="deleteStudent(${i})">Delete</button></td></tr>`).join("");
+
+  attendanceBody.innerHTML = filteredStudents.map((s,i)=>
+    `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.dept}</td>
+   <td>
+  <button class="status-btn present-btn ${s.status==='Present'?'active':''}"
+    onclick="setStatus(${students.indexOf(s)}, 'Present')">
+    ✔ Present
+  </button>
+
+  <button class="status-btn absent-btn ${s.status==='Absent'?'active':''}"
+    onclick="setStatus(${students.indexOf(s)}, 'Absent')">
+    ✖ Absent
+  </button>
+</td>
+</tr>`).join("");
+}
+
+function editStudent(i){
+  editIndex = i;
+  fullName.value = students[i].name;
+  studentId.value = students[i].id;
+  email.value = students[i].email;
+  phone.value = students[i].phone;
+  dept.value = students[i].dept;
+  year.value = students[i].year;
+  openModal();
+}
+
+function deleteStudent(i){
+  if(confirm("Delete this student?")){
+    students.splice(i,1);
+    render();
+updateDashboard();
+  }
+}
+
+function markAll(status){
+  students.forEach(s=>s.status=status);
+  render();
+}
+
+function saveAttendance(){ alert("Attendance saved!"); }
+
+function searchStudents(){
+  const q = searchStudent.value.toLowerCase();
+  studentBody.innerHTML = students.filter(s=>Object.values(s).join(" ").toLowerCase().includes(q))
+    .map((s,i)=>`<tr><td>${s.id}</td><td>${s.name}</td><td>${s.dept}</td><td>${s.year}</td>
+    <td><button class="action-btn btn-edit" onclick="editStudent(${i})">Edit</button>
+    <button class="action-btn btn-delete" onclick="deleteStudent(${i})">Delete</button></td></tr>`).join("");
+}
+
+// REPORT
+function updateReport(){
+  const total = students.length;
+  const present = students.filter(s=>s.status==="Present").length;
+  const absent = students.filter(s=>s.status==="Absent").length;
+  
+  document.getElementById("reportTotal").innerText = total;
+  document.getElementById("reportPresent").innerText = present;
+  document.getElementById("reportAbsent").innerText = absent;
+}
+
+
+// Theme toggle
+const btn = document.querySelector(".theme-toggle");
+if(localStorage.theme==="dark"){ document.body.classList.add("dark"); btn.textContent="☀"; }
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+  const dark = document.body.classList.contains("dark");
+  btn.textContent = dark?"☀":"🌙";
+  localStorage.theme = dark?"dark":"light";
+}
+</script>
+<script>
+let classes = [];
+
+function renderClasses(){
+updateDashboard();
+  classBody.innerHTML = classes.map((c,i)=>`
+    <tr>
+      <td>${c.dept}</td>
+      <td>${c.year}</td>    
+      <td>${c.subject}</td>
+      <td>
+        <button class="action-btn btn-delete" onclick="deleteClass(${i})">Delete</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function deleteClass(i){
+  if(confirm("Delete this class?")){
+    classes.splice(i,1);
+    renderClasses();
+updateDashboard();
+
+  }
+}
+function updateDashboard(){
+  // Total Students
+  document.getElementById("total").innerText = students.length;
+
+  // Total Classes
+  document.getElementById("totalClasses").innerText = classes.length;
+
+  // Present Today
+  const present = students.filter(s => s.status === "Present").length;
+  document.getElementById("todayAttendance").innerText = present;
+
+  // Attendance Rate %
+  const rate = students.length
+    ? Math.round((present / students.length) * 100)
+    : 0;
+  document.getElementById("monthAttendance").innerText = rate + "%";
+}
+updateDashboard();
+function setStatus(index, status){
+  students[index].status = status;
+  render();
+}
+
+
+</script>
+
+
+</body>
+<script>
+function logout() {
+  // Show the login page
+  document.getElementById("loginPage").style.display = "flex";
+
+  // Hide all main containers
+  document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+
+  // Clear input fields (optional)
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+
+  // Reset theme toggle text if needed
+  const btn = document.querySelector(".theme-toggle");
+  if(document.body.classList.contains("dark")){
+    btn.textContent = "☀";
+  } else {
+    btn.textContent = "🌙";
+  }
+}
+
+/* ================= FIXED CLASSES LOGIC ================= */
+function addClass(){
+  if(!classDept.value || !classYear.value || !classSem.value || !classSubject.value){
+    return alert("Please select all class details");
+  }
+
+  classes.push({
+    dept: classDept.value,
+    year: classYear.value,
+    sem: classSem.value,
+    subject: classSubject.value
+  });
+
+  classDept.value = "";
+  classYear.value = "";
+  classSem.value  = "";
+  classSubject.value = "";
+
+  renderClasses();
+  updateDashboard();
+}
+
+function renderClasses(){
+  classBody.innerHTML = classes.map((c,i)=>`
+    <tr>
+      <td>${c.dept}</td>
+      <td>${c.year}</td>
+      <td>${c.sem}</td>
+      <td>${c.subject}</td>
+      <td>
+        <button class="action-btn btn-delete" onclick="deleteClass(${i})">Delete</button>
+      </td>
+    </tr>
+  `).join("");
+
+  document.getElementById("totalClasses").innerText = classes.length;
+}
+
+function deleteClass(i){
+  if(confirm("Delete this class?")){
+    classes.splice(i,1);
+    renderClasses();
+    updateDashboard();
+  }
+}
+
+
+  
+
+/* ================= FIXED ATTENDANCE + REPORT ================= */
+function setStatus(index, status){
+  students[index].status = status;
+  render();
+  updateReport();
+}
+
+function markAll(status){
+  students.forEach(s=>s.status=status);
+  render();
+  updateReport();
+}
+
+function saveAttendance(){
+  alert("Attendance saved!");
+  updateReport();
+}
+
+/* ================= FIXED REPORT ================= */
+function exportAttendance() {
+  let csv = "ID,Name,Department,Year,Status\n";
+  students.forEach(s => { 
+    csv += `${s.id},${s.name},${s.dept},${s.year},${s.status}\n`; 
+  });
+
+  csv += "\nClasses List\nDept,Year,Semester,Subject\n";
+  classes.forEach(c => {
+    csv += `${c.dept},${c.year},${c.sem},${c.subject}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "attendance_and_classes_report.csv";
+  link.click();
+}
+
+
+/* ======================= CLASS DATA ======================= */
+
+const classData = {
+  "Computer Science and Engineering": {
+    "1st Year": {
+      "1st Sem": [
+        "Engineering Mathematics-1",
+        "IT Skills",
+        "Fundamentals of Electrical & Electronics Engineering",
+        "Basics of Digital Logic and Computer Organization",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Engineering Mathematics-2",
+        "Essential English Communication",
+        "Computer Aided Engineering Graphics",
+        "Thinking Programming With Python",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Python Programming",
+        "Computer Hardware Maintenance & Administration",
+        "Computer Networks",
+        "Database System Concepts & PL/SQL",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "Data Structures With Python",
+        "Operating System & Administration",
+        "Object Oriented Programming & Design With Java",
+        "Software Engineering Principles & Practices",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Artificial Intelligence & Machine Learning"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  },
+
+  "Electronics and Communication Engineering": {
+    "1st Year": {
+      "1st Sem": [
+        "Engineering Mathematics-1",
+        "IT Skills",
+        "Fundamentals of Electrical & Electronics Engineering",
+        "Digital Electronics-1",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Engineering Mathematics-2",
+        "Essential English Communication",
+        "Computer Aided Engineering Graphics",
+        "Applied Electronics-1",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Analog Electronics",
+        "Logic Design Using Verilog",
+        "Communication Systems",
+        "Electronic Measurements & Testing Techniques",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "PCB Design & Fabrication",
+        "Wireless Communication",
+        "Embedded C Programming",
+        "Industrial Automation",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Digital Communication"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  },
+
+  "Electrical and Electronics Engineering": {
+    "1st Year": {
+      "1st Sem": [
+        "Engineering Mathematics-1",
+        "Computer Aided Engineering Graphics",
+        "Fundamentals of Electrical & Electronics Engineering",
+        "Electrical Wiring Systems & Practice",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Engineering Mathematics-2",
+        "IT Skills",
+        "Essential English Communication",
+        "Concepts of Electrical Circuits",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Transformers & Alternators",
+        "Transmission & Distribution",
+        "Switchgear & Protection",
+        "Analog & Digital Electronics",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "Electric Motors",
+        "Power Electronics",
+        "Fundamentals of Automation Technology",
+        "Computer Aided Electrical Drafting",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Electrical Utility Engineering"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  },
+
+  "Civil Engineering": {
+    "1st Year": {
+      "1st Sem": [
+        "Engineering Mathematics-1",
+        "Essential English Communication",
+        "IT Skills",
+        "Construction Materials",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Engineering Mathematics-2",
+        "Fundamentals of Electrical & Electronics Engineering",
+        "Civil Engineering Graphics & CAD",
+        "Basic Surveying",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Engineering Mechanics & Strength of Materials",
+        "Modern Surveying",
+        "Construction Techniques",
+        "Building Drawing Using CADD",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "Concrete Technology",
+        "Building Estimating & Valuation",
+        "Site Management",
+        "Design & Detailing of RCC Structures",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Structural Engineering"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  },
+
+  "Mechanical Engineering": {
+    "1st Year": {
+      "1st Sem": [
+        "Engineering Mathematics-1",
+        "Essential English Communication",
+        "Computer Aided Engineering Drawing",
+        "Concepts of Mechanical Engineering-1",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Engineering Mathematics-2",
+        "IT Skills",
+        "Fundamentals of Electrical & Electronics Engineering",
+        "Concepts of Mechanical Engineering-2",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Mechanics of Materials",
+        "Machine Tools Technology",
+        "Manufacturing Processes",
+        "Fluid Power Engineering",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "Operations Management",
+        "CNC Programming & Machining",
+        "Product Design & Development",
+        "Elements of Industrial Automation",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Design of Machine Elements"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  },
+
+  "Apparel Design and Fabrication Technology": {
+    "1st Year": {
+      "1st Sem": [
+        "Elements of Sewing Techniques",
+        "Fashion Fundamentals",
+        "Pattern Illustration-1",
+        "Essential English Communication",
+        "Environmental Sustainability"
+      ],
+      "2nd Sem": [
+        "Needle Art & Embellishment-1",
+        "Fiber Science",
+        "Pattern Illustration-2",
+        "Fashion Sketching & Painting",
+        "Indian Constitution"
+      ]
+    },
+    "2nd Year": {
+      "3rd Sem": [
+        "Pattern Illustration-3",
+        "Surface Embellishment-1",
+        "Yarn Science",
+        "CAD",
+        "Kannada"
+      ],
+      "4th Sem": [
+        "Pattern Illustration-4",
+        "Surface Embellishment-2",
+        "Dyeing & Printing",
+        "Pattern & Designing CAD",
+        "Indian Constitution"
+      ]
+    },
+    "3rd Year": {
+      "5th Sem": ["Apparel Production & Quality Management"],
+      "6th Sem": ["Project", "Internship"]
+    }
+  }
+};
+
+/* ======================= DROPDOWN LOGIC ======================= */
+
+const deptSel = document.getElementById("classDept");
+const yearSel = document.getElementById("classYear");
+const semSel  = document.getElementById("classSem");
+const subSel  = document.getElementById("classSubject");
+
+/* Load Departments */
+// Load Departments
+Object.keys(classData).forEach(d => {
+  deptSel.innerHTML += `<option>${d}</option>`;
+});
+
+function loadYears(){
+  yearSel.innerHTML = `<option value="">Select Year</option>`;
+  semSel.innerHTML  = `<option value="">Select Semester</option>`;
+  subSel.innerHTML  = `<option value="">Select Subject</option>`;
+
+  Object.keys(classData[deptSel.value]).forEach(y => {
+    yearSel.innerHTML += `<option>${y}</option>`;
+  });
+}
+
+function loadSemesters(){
+  semSel.innerHTML = `<option value="">Select Semester</option>`;
+  subSel.innerHTML = `<option value="">Select Subject</option>`;
+
+  Object.keys(classData[deptSel.value][yearSel.value]).forEach(s => {
+    semSel.innerHTML += `<option>${s}</option>`;
+  });
+}
+
+function loadSubjects(){
+  subSel.innerHTML = `<option value="">Select Subject</option>`;
+  classData[deptSel.value][yearSel.value][semSel.value].forEach(sub => {
+    subSel.innerHTML += `<option>${sub}</option>`;
+  });
+}
+
+</script>
+
+</html>
